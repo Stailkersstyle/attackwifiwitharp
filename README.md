@@ -5,7 +5,7 @@ Attack wifi with arp method
 - Download Npcap https://npcap.com/
 - Install Npcap programs
 
-### Step ll
+### Step l
 - Download Vscode https://code.visualstudio.com/
 - Install & Run Vscode Programs
 - Alternatif Download Git https://git-scm.com/downloads
